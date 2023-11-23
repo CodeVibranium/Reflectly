@@ -7,6 +7,7 @@ const rateLimiter = require("express-rate-limit");
 const { connectToDb } = require("./db/connection");
 const { expressMiddleware } = require("@apollo/server/express4");
 const apolloServer = require("./graphql/apollo.server");
+const { errorMiddleware } = require("./middlewares/error.middleware");
 
 const app = express();
 
@@ -53,8 +54,13 @@ const PORT = process.env.PORT;
 
 apolloServer().then(async (server) => {
   await server.start();
-  app.use("/graphql/", expressMiddleware(server));
+  app.use(
+    "/graphql/",
+    expressMiddleware(server, { context: ({ req, res }) => ({ req, res }) })
+  );
 });
+
+app.use(errorMiddleware);
 
 app.listen(PORT, () => {
   console.log("Server is listening on port:", PORT);

@@ -5,8 +5,8 @@ const Schema = new mongoose.Schema(
     name: {
       type: String,
       required: [true, "User name is required"],
-      min: [2, "Min length of 2 chars"],
-      max: [60, "Max length of 60 chars"],
+      minlength: [2, "Min length of 2 chars"],
+      maxlength: [60, "Max length of 60 chars"],
       unique: true,
     },
     email: {
@@ -42,4 +42,4 @@ const Schema = new mongoose.Schema(
 );
 
 const UserModel = mongoose.model("User", Schema);
-module.exports = { UserModel };
+module.exports = UserModel;

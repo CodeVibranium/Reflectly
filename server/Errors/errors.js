@@ -1,31 +1,53 @@
-class BadRequestError extends Error {
-  constructor(message, code) {
+const { GraphQLError } = require("graphql");
+
+class BadRequestError extends GraphQLError {
+  constructor(message, context, code = "BAD_REQUEST") {
     super(message);
-    this.statusCode = 400;
-    this.code = code || "BAD_REQUEST";
+    this.message = message;
+    this.extensions = {
+      ...this.extensions,
+      statusCode: 400,
+      code,
+      context,
+    };
   }
 }
 
-class NotFoundError extends Error {
-  constructor(message, code) {
+class NotFoundError extends GraphQLError {
+  constructor(message, context, code = "NOT_FOUND") {
     super(message);
-    this.statusCode = 404;
-    this.code = code || "NOT_FOUND";
+    this.message = message;
+    this.extensions = {
+      ...this.extensions,
+      statusCode: 404,
+      code: code,
+    };
+    this.context = context;
   }
 }
-class UnAuthenticatedError extends Error {
-  constructor(message, code) {
+class UnAuthenticatedError extends GraphQLError {
+  constructor(message, context, code = "UNAUTHENTICATED") {
     super(message);
-    this.statusCode = 401;
-    this.code = code || "UNAUTHENTICATED";
+    this.message = message;
+    this.extensions = {
+      ...this.extensions,
+      statusCode: 401,
+      code: code,
+    };
+    this.context = context;
   }
 }
 
-class UnAuthorizedError extends Error {
-  constructor(message, code) {
+class UnAuthorizedError extends GraphQLError {
+  constructor(message, context, code = "UNAUTHORIZED") {
     super(message);
-    this.statusCode = 403;
-    this.code = code || "UNAUTHORIZED";
+    this.message = message;
+    this.extensions = {
+      ...this.extensions,
+      statusCode: 403,
+      code: code,
+    };
+    this.context = context;
   }
 }
 
