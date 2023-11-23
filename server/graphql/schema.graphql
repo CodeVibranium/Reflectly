@@ -1,3 +1,32 @@
 type Query {
   greeting: String
+  reflect(reflectId: ID!): Reflect!
+  userReflects(userId: ID!): [Reflect!]
+}
+
+type Mutation {
+  createAReflect(input: CreateReflectPayload!): Reflect
+  deleteAReflect(reflectId: ID!): Reflect!
+}
+
+scalar DateTimeType
+
+type Reflect {
+  id: ID!
+  reflect: String!
+  isPublic: Boolean!
+  isAnonymous: Boolean!
+  password: String
+  author: ID
+  views: Int
+  createdAt: String
+  updatedAt: String
+}
+
+input CreateReflectPayload {
+  reflect: String!
+  isPublic: Boolean!
+  isAnonymous: Boolean!
+  password: String
+  authorId: ID
 }
