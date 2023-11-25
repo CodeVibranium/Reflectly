@@ -1,12 +1,12 @@
 // const ReflectModel=require("")
 
+const mongoose = require("mongoose");
+const UserModel = require("../models/user.model");
 const { BadRequestError } = require("../Errors/errors");
 const ReflectModel = require("../models/reflect.model");
-const UserModel = require("../models/user.model");
-const { ApolloError } = require("@apollo/server");
-const mongoose = require("mongoose");
 const { ReflectValidator } = require("../validations/reflect.validations");
 require("express-async-errors");
+
 async function createAReflect(_root, data, context) {
   try {
     data = await ReflectValidator.validateAsync(data.input);
@@ -24,9 +24,19 @@ async function createAReflect(_root, data, context) {
     }
   }
 }
-async function deleteAReflect(_root, data) {
-  console.log("Data deleteAReflect", data);
-  return null;
+async function deleteAReflect(_root, data, context) {
+  const reflect = await ReflectModel.findById(data.reflectId);
+  if (reflect.isPublic) throw new BadRequestError("Cannot delete this Reflect");
+  await ReflectModel.deleteOne({ _id: reflect._id });
+  return reflect;
 }
 
-module.exports = { createAReflect, deleteAReflect };
+async function listAllPublicAnonymousReflects(_root, data, context) {
+  return await ReflectModel.find({ isAnonymous: true, isPublic: true });
+}
+
+module.exports = {
+  createAReflect,
+  deleteAReflect,
+  listAllPublicAnonymousReflects,
+};

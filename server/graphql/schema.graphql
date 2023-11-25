@@ -2,11 +2,15 @@ type Query {
   greeting: String
   reflect(reflectId: ID!): Reflect!
   userReflects(userId: ID!): [Reflect!]
+  allPublicReflects(isAnonymous: Boolean): [Reflect!]
+  getUserDetails(userId: ID!): User
+  login(loginInput: LoginInput!): User
 }
 
 type Mutation {
   createAReflect(input: CreateReflectPayload!): Reflect
-  deleteAReflect(reflectId: ID!): Reflect!
+  deleteAReflect(reflectId: ID!): Reflect
+  createAUser(userInput: CreateAUser!): User
 }
 
 scalar DateTimeType
@@ -29,4 +33,24 @@ input CreateReflectPayload {
   isAnonymous: Boolean!
   password: String
   authorId: ID
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  createdAt: String
+  updatedAt: String
+}
+
+input CreateAUser {
+  name: String!
+  email: String!
+  password: String!
+}
+
+input LoginInput {
+  name: String
+  password: String!
+  email: String
 }

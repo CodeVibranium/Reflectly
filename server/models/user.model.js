@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const bcrypt = require("bcrypt");
 const Schema = new mongoose.Schema(
   {
     name: {
@@ -7,12 +7,12 @@ const Schema = new mongoose.Schema(
       required: [true, "User name is required"],
       minlength: [2, "Min length of 2 chars"],
       maxlength: [60, "Max length of 60 chars"],
-      unique: true,
+      unique: [true, "User name already taken"],
     },
     email: {
       type: String,
       required: [true, "Email is required"],
-      unique: true,
+      unique: [true, "Email already in use"],
       trim: true,
       lowercase: true,
       validate: {
@@ -40,6 +40,19 @@ const Schema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+Schema.pre("save", async function () {
+  const salt = await bcrypt.genSalt(10);
+  // await in hash is required because hash() returns a promise
+  const hashedPassword = await bcrypt.hash(this.password, salt);
+  console.log(hashedPassword, "this.password =");
+  this.password = hashedPassword;
+});
+
+Schema.methods.comparePassword = async function (userPassword) {
+  const isValid = await bcrypt.compare(userPassword, this.password);
+  return isValid;
+};
 
 const UserModel = mongoose.model("User", Schema);
 module.exports = UserModel;
